@@ -1,0 +1,4 @@
+# Keep GitHub language stats focused on source code and documentation.
+powerbi/tabular_editor/*.csx linguist-vendored
+powerbi/pbix/*.pbix linguist-vendored
+powerbi/screenshots/* linguist-vendored

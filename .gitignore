@@ -1,0 +1,30 @@
+# OS / system files
+Thumbs.db
+Desktop.ini
+
+# Editor folders
+.vscode/
+.idea/
+
+# Logs
+*.log
+logs/
+
+# dbt artifacts
+target/
+dbt_packages/
+
+# Raw source data archives
+Olist_archive/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Temporary files
+*.tmp
+*.bak
+
+# Optional local environment files
+.env
+.env.*

@@ -1,0 +1,53 @@
+name: 'olist_retail_profitability'
+version: '1.0.0'
+config-version: 2
+
+profile: 'olist_project'
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+vars:
+  powerbi_reporting_start_date: '2017-01-01'
+
+seeds:
+  olist_retail_profitability:
+    +schema: seeds
+    assumptions:
+      +schema: seeds
+
+models:
+  olist_retail_profitability:
+    +materialized: view
+    staging:
+      +schema: staging
+      +materialized: view
+    intermediate:
+      +schema: intermediate
+      +materialized: view
+    marts:
+      +materialized: table
+      core:
+        +schema: marts_core
+        facts:
+          +materialized: table
+      profitability:
+        +schema: marts_profitability
+        +materialized: table
+      payments:
+        +schema: marts_payments
+        +materialized: table
+      growth:
+        +schema: marts_growth
+        +materialized: table
+    reporting:
+      +schema: reporting
+      +materialized: view
