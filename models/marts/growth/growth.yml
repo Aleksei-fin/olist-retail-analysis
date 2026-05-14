@@ -1,0 +1,102 @@
+version: 2
+
+models:
+  - name: mart_customer_cohorts
+    description: Customer cohort retention mart at cohort month and activity month grain using delivered orders.
+    columns:
+      - name: cohort_month
+        tests:
+          - not_null
+      - name: activity_month
+        tests:
+          - not_null
+      - name: months_since_cohort
+        tests:
+          - not_null
+      - name: cohort_size
+        tests:
+          - not_null
+      - name: active_customers
+        tests:
+          - not_null
+      - name: retention_rate
+        tests:
+          - not_null
+
+  - name: mart_customer_metrics
+    description: Customer-level growth mart using Olist customer_unique_id as the analytical customer key.
+    columns:
+      - name: customer_id
+        description: Analytical customer key based on Olist customer_unique_id.
+        tests:
+          - not_null
+          - unique
+      - name: first_order_date
+        tests:
+          - not_null
+      - name: last_order_date
+        tests:
+          - not_null
+      - name: total_orders
+        tests:
+          - not_null
+      - name: is_repeat_customer
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [0, 1]
+      - name: churn_status
+        description: Backward-compatible customer recency label. Values mean recent purchase within the final 90 days of the dataset or inactive for more than 90 days; this is not subscription churn.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['recent', 'inactive_90d']
+      - name: customer_recency_status
+        description: Recency-based customer status. `recent` means the customer's last purchase occurred within 90 days of the dataset end; `inactive_90d` means the last purchase was earlier than that cutoff.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['recent', 'inactive_90d']
+
+  - name: mart_new_customers
+    description: Monthly count of customers whose first delivered purchase occurred in the month.
+    columns:
+      - name: order_month
+        tests:
+          - not_null
+          - unique
+      - name: new_customers
+        tests:
+          - not_null
+
+  - name: mart_marketing_efficiency
+    description: Simulated monthly marketing efficiency by marketing scenario, without channel attribution.
+    columns:
+      - name: order_month
+        tests:
+          - not_null
+      - name: marketing_scenario
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['organic', 'base', 'paid_growth']
+          - relationships:
+              arguments:
+                to: ref('stg_marketing_assumptions')
+                field: marketing_scenario
+      - name: marketing_rate
+        tests:
+          - not_null
+      - name: total_marketing_cost
+        tests:
+          - not_null
+      - name: new_customers
+        tests:
+          - not_null
+      - name: total_revenue
+        tests:
+          - not_null

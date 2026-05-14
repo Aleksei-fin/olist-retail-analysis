@@ -1,0 +1,71 @@
+version: 2
+
+models:
+  - name: rpt_powerbi_customer_cohorts
+    description: Power BI-ready customer cohort retention reporting view filtered to the centralized Power BI reporting period.
+    columns:
+      - name: cohort_month
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_day
+      - name: activity_month
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_day
+      - name: retention_rate
+        tests:
+          - not_null
+
+  - name: rpt_powerbi_customer_metrics
+    description: Power BI-ready customer metrics reporting view filtered to the centralized Power BI reporting period.
+    columns:
+      - name: customer_id
+        tests:
+          - not_null
+          - unique
+      - name: first_order_date
+        tests:
+          - not_null
+      - name: customer_recency_status
+        description: Recency-based customer status. `recent` means the customer's last purchase occurred within 90 days of the dataset end; `inactive_90d` means the last purchase was earlier than that cutoff.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['recent', 'inactive_90d']
+      - name: churn_status
+        description: Backward-compatible customer recency label using the same values as customer_recency_status. This is not subscription churn.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['recent', 'inactive_90d']
+
+  - name: rpt_powerbi_marketing_efficiency
+    description: Power BI-ready simulated marketing efficiency reporting view filtered to the centralized Power BI reporting period.
+    columns:
+      - name: order_month
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_day
+      - name: marketing_scenario
+        tests:
+          - not_null
+      - name: total_marketing_cost
+        tests:
+          - not_null
+      - name: usd_fx_rate
+        tests:
+          - not_null
+      - name: eur_fx_rate
+        tests:
+          - not_null
