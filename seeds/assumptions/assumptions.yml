@@ -1,0 +1,128 @@
+version: 2
+
+seeds:
+  - name: opex_assumptions
+    description: Tiered activity-based OPEX assumptions used for monthly P&L.
+    columns:
+      - name: opex_scenario
+        tests:
+          - not_null
+          - unique
+          - accepted_values:
+              arguments:
+                values: ['lean', 'base', 'growth']
+      - name: base_fixed_ga_brl
+        tests:
+          - not_null
+      - name: variable_ops_per_order_brl
+        tests:
+          - not_null
+      - name: capacity_tier_orders
+        tests:
+          - not_null
+      - name: step_infrastructure_cost_brl
+        tests:
+          - not_null
+
+  - name: marketing_assumptions
+    description: Scenario-based Sales & Marketing assumptions used to simulate variable growth cost from gross revenue.
+    columns:
+      - name: marketing_scenario
+        tests:
+          - not_null
+          - unique
+          - accepted_values:
+              arguments:
+                values: ['organic', 'base', 'paid_growth']
+      - name: marketing_rate
+        tests:
+          - not_null
+
+  - name: tax_assumptions
+    description: Standard tax assumption used to simulate tax on positive monthly operating profit.
+    columns:
+      - name: tax_name
+        tests:
+          - not_null
+          - unique
+          - accepted_values:
+              arguments:
+                values: ['standard_profit_tax']
+      - name: tax_rate
+        tests:
+          - not_null
+
+  - name: fx_rates_monthly
+    description: Monthly BRL to USD/EUR FX rates based on Banco Central do Brasil PTAX monthly average closing sell rates.
+    columns:
+      - name: fx_month
+        tests:
+          - not_null
+      - name: base_currency
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['BRL']
+      - name: target_currency
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['USD', 'EUR']
+      - name: fx_rate
+        tests:
+          - not_null
+
+  - name: delivery_cost_rules
+    description: Mixed delivery cost assumptions using a fixed cost per order plus a variable rate on freight revenue.
+    columns:
+      - name: rule_name
+        tests:
+          - not_null
+          - unique
+      - name: fixed_cost_per_order_brl
+        tests:
+          - not_null
+      - name: variable_delivery_rate
+        tests:
+          - not_null
+
+  - name: payment_fee_rules
+    description: Payment type-level assumptions used to simulate payment processing fees.
+    columns:
+      - name: payment_type
+        tests:
+          - not_null
+          - unique
+      - name: payment_fee_rate
+        tests:
+          - not_null
+
+  - name: category_mapping
+    description: Maps translated Olist product categories to business categories used for retail finance analysis.
+    columns:
+      - name: product_category_name_english
+        tests:
+          - not_null
+          - unique
+      - name: business_category
+        tests:
+          - not_null
+
+  - name: category_assumptions
+    description: Business category-level COGS, waste, and perishability assumptions.
+    columns:
+      - name: business_category
+        tests:
+          - not_null
+          - unique
+      - name: cogs_rate
+        tests:
+          - not_null
+      - name: waste_rate
+        tests:
+          - not_null
+      - name: is_perishable
+        tests:
+          - not_null

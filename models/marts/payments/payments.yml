@@ -1,0 +1,47 @@
+version: 2
+
+models:
+  - name: fact_payments_enriched
+    description: Payment fact table enriched with simulated payment fees and unknown payment type flags.
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+      - name: payment_type
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['boleto', 'credit_card', 'debit_card', 'voucher', 'not_defined']
+      - name: payment_fee_rate
+        tests:
+          - not_null
+      - name: is_payment_type_unknown
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [0, 1]
+      - name: simulated_payment_fee
+        tests:
+          - not_null
+      - name: net_payment_value
+        tests:
+          - not_null
+
+  - name: mart_payment_kpis
+    description: Payment KPI mart by payment type.
+    columns:
+      - name: payment_type
+        tests:
+          - not_null
+          - unique
+          - accepted_values:
+              arguments:
+                values: ['boleto', 'credit_card', 'debit_card', 'voucher', 'not_defined']
+      - name: total_payment_value
+        tests:
+          - not_null
+      - name: total_simulated_fees
+        tests:
+          - not_null

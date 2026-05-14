@@ -1,0 +1,194 @@
+version: 2
+
+models:
+  - name: stg_orders
+    description: Cleaned order-level source data.
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+          - unique
+      - name: customer_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_customers')
+                field: customer_id
+      - name: order_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['approved', 'canceled', 'created', 'delivered', 'invoiced', 'processing', 'shipped', 'unavailable']
+
+  - name: stg_order_items
+    description: Cleaned item-level order lines.
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_orders')
+                field: order_id
+      - name: order_item_id
+        tests:
+          - not_null
+      - name: product_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_products')
+                field: product_id
+      - name: item_revenue
+        tests:
+          - not_null
+
+  - name: stg_payments
+    description: Cleaned payment records before order-level aggregation.
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_orders')
+                field: order_id
+      - name: payment_value
+        tests:
+          - not_null
+
+  - name: stg_products
+    description: Cleaned product master data.
+    columns:
+      - name: product_id
+        tests:
+          - not_null
+          - unique
+
+  - name: stg_customers
+    description: Cleaned customer master data.
+    columns:
+      - name: customer_id
+        tests:
+          - not_null
+          - unique
+
+  - name: stg_category_mapping
+    description: Maps translated Olist categories to business categories.
+    columns:
+      - name: product_category_name_english
+        tests:
+          - not_null
+          - unique
+      - name: business_category
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_category_assumptions')
+                field: business_category
+
+  - name: stg_category_assumptions
+    description: Business category-level assumptions for COGS, waste, and perishability.
+    columns:
+      - name: business_category
+        tests:
+          - not_null
+          - unique
+
+  - name: stg_delivery_cost_rules
+    description: Mixed delivery cost assumptions using a fixed cost per order plus a variable rate on freight revenue.
+    columns:
+      - name: rule_name
+        tests:
+          - not_null
+          - unique
+          - accepted_values:
+              arguments:
+                values: ['standard', 'high_cost', 'low_cost']
+      - name: fixed_cost_per_order_brl
+        tests:
+          - not_null
+      - name: variable_delivery_rate
+        tests:
+          - not_null
+      - name: delivery_cost_rate
+        description: Compatibility alias for variable_delivery_rate used by existing Power BI fields.
+        tests:
+          - not_null
+
+  - name: stg_opex_assumptions
+    description: Tiered activity-based OPEX assumptions used for monthly P&L.
+    columns:
+      - name: opex_scenario
+        tests:
+          - not_null
+          - unique
+          - accepted_values:
+              arguments:
+                values: ['lean', 'base', 'growth']
+      - name: base_fixed_ga_brl
+        tests:
+          - not_null
+      - name: variable_ops_per_order_brl
+        tests:
+          - not_null
+      - name: capacity_tier_orders
+        tests:
+          - not_null
+      - name: step_infrastructure_cost_brl
+        tests:
+          - not_null
+
+  - name: stg_marketing_assumptions
+    description: Scenario-based marketing assumptions used to simulate Sales & Marketing cost as a percentage of gross revenue.
+    columns:
+      - name: marketing_scenario
+        tests:
+          - not_null
+          - unique
+          - accepted_values:
+              arguments:
+                values: ['organic', 'base', 'paid_growth']
+      - name: marketing_rate
+        tests:
+          - not_null
+
+  - name: stg_tax_assumptions
+    description: Standard tax assumption used to simulate tax on positive monthly operating profit.
+    columns:
+      - name: tax_name
+        tests:
+          - not_null
+          - unique
+          - accepted_values:
+              arguments:
+                values: ['standard_profit_tax']
+      - name: tax_rate
+        tests:
+          - not_null
+
+  - name: stg_fx_rates_monthly
+    description: Monthly BRL to USD/EUR FX rates used for Power BI multi-currency reporting.
+    columns:
+      - name: fx_month
+        tests:
+          - not_null
+      - name: base_currency
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['BRL']
+      - name: target_currency
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['USD', 'EUR']
+      - name: fx_rate
+        tests:
+          - not_null

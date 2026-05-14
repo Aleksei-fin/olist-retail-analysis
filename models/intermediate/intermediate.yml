@@ -1,0 +1,102 @@
+version: 2
+
+models:
+  - name: int_payments_by_order
+    description: Aggregates payment rows to one row per order.
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+          - unique
+      - name: payment_value
+        tests:
+          - not_null
+
+  - name: int_payments_enriched
+    description: Payment records enriched with simulated fee rates and data quality flags.
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+      - name: payment_type
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['boleto', 'credit_card', 'debit_card', 'voucher', 'not_defined']
+      - name: payment_fee_rate
+        tests:
+          - not_null
+      - name: is_payment_type_unknown
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [0, 1]
+      - name: simulated_payment_fee
+        tests:
+          - not_null
+      - name: net_payment_value
+        tests:
+          - not_null
+
+  - name: int_payment_fees_by_order
+    description: Aggregates simulated payment fees to one row per order.
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+          - unique
+      - name: simulated_payment_fee
+        tests:
+          - not_null
+
+  - name: int_sales_base
+    description: Delivered item-level sales base with orders, products, category translation, and order-level payment totals.
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+      - name: order_item_id
+        tests:
+          - not_null
+      - name: category
+        tests:
+          - not_null
+      - name: business_category
+        tests:
+          - not_null
+      - name: is_category_unmapped
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [0, 1]
+
+  - name: int_sales_with_payment_allocation
+    description: Item-level sales base with proportional payment allocation and reconciliation fields.
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+      - name: order_item_id
+        tests:
+          - not_null
+      - name: allocated_payment_value
+        description: Order-level payment value allocated to item rows. Can be null when payment data is missing.
+      - name: allocated_payment_fee
+        description: Order-level simulated payment fee allocated to item rows. Can be null when payment data is missing.
+      - name: is_category_unmapped
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [0, 1]
+
+  - name: int_category_assumptions
+    description: Category-level COGS, waste, and perishability assumptions.
+    columns:
+      - name: business_category
+        tests:
+          - not_null
+          - unique

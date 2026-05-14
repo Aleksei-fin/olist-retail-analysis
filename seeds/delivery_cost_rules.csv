@@ -1,0 +1,4 @@
+rule_name,fixed_cost_per_order_brl,variable_delivery_rate,description
+standard,1.50,0.55,Base mixed logistics cost assumption
+high_cost,2.50,0.70,Expensive logistics with higher fixed and variable cost
+low_cost,1.00,0.45,Optimized logistics with lower fixed and variable cost

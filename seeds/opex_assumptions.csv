@@ -1,0 +1,4 @@
+opex_scenario,base_fixed_ga_brl,variable_ops_per_order_brl,capacity_tier_orders,step_infrastructure_cost_brl,description
+lean,30000,1.50,15000,5000,"Minimal staff, manual processes"
+base,45000,1.00,10000,8000,"Balanced staff and systems"
+growth,70000,0.50,8000,12000,"Higher fixed base, automation-led scale"

@@ -1,0 +1,6 @@
+payment_type,payment_fee_rate,fee_description
+credit_card,0.025,standard acquiring fee for card payments
+debit_card,0.015,lower-cost debit card payment
+boleto,0.010,bank slip payment with lower processing cost
+voucher,0.005,internal voucher or promotional payment method
+not_defined,0.020,fallback average fee for undefined payment type

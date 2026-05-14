@@ -1,0 +1,2 @@
+tax_name,tax_rate,tax_description
+standard_profit_tax,0.34,Base simulated effective corporate income tax rate applied only to positive operating profit

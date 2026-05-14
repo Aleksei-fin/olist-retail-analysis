@@ -1,0 +1,4 @@
+marketing_scenario,marketing_rate,marketing_scenario_description
+organic,0.05,Low marketing intensity / mostly organic traffic
+base,0.10,Base marketing intensity
+paid_growth,0.20,Aggressive paid acquisition / growth scenario

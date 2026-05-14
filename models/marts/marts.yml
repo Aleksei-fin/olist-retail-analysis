@@ -1,0 +1,276 @@
+version: 2
+
+models:
+  - name: fact_sales
+    description: Core delivered item-level sales fact table.
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+      - name: order_item_id
+        tests:
+          - not_null
+      - name: product_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_products')
+                field: product_id
+
+  - name: mart_sales_profitability
+    description: Delivered item-level profitability mart with allocated payments, simulated COGS, waste, and margin metrics.
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+      - name: order_item_id
+        tests:
+          - not_null
+      - name: category
+        tests:
+          - not_null
+      - name: business_category
+        tests:
+          - not_null
+      - name: is_category_unmapped
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [0, 1]
+      - name: product_revenue
+        tests:
+          - not_null
+      - name: allocated_payment_value
+        description: Order-level payment value allocated to item rows. Can be null when payment data is missing.
+      - name: simulated_cogs
+        tests:
+          - not_null
+      - name: simulated_waste_cost
+        tests:
+          - not_null
+      - name: simulated_payment_fee
+        tests:
+          - not_null
+      - name: simulated_delivery_cost
+        tests:
+          - not_null
+      - name: marketing_scenario
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['base']
+          - relationships:
+              arguments:
+                to: ref('stg_marketing_assumptions')
+                field: marketing_scenario
+      - name: marketing_rate
+        tests:
+          - not_null
+      - name: simulated_marketing_cost
+        tests:
+          - not_null
+      - name: contribution_margin
+        tests:
+          - not_null
+      - name: contribution_margin_after_marketing
+        tests:
+          - not_null
+
+  - name: mart_delivery_impact
+    description: Delivery economics mart by month, business category, and delivery rule.
+    columns:
+      - name: order_month
+        tests:
+          - not_null
+      - name: business_category
+        tests:
+          - not_null
+      - name: delivery_rule_name
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['standard', 'high_cost', 'low_cost']
+      - name: fixed_cost_per_order_brl
+        tests:
+          - not_null
+      - name: variable_delivery_rate
+        tests:
+          - not_null
+      - name: orders_count
+        tests:
+          - not_null
+      - name: gross_revenue
+        tests:
+          - not_null
+      - name: freight_revenue
+        tests:
+          - not_null
+      - name: simulated_delivery_cost
+        tests:
+          - not_null
+      - name: contribution_margin
+        tests:
+          - not_null
+
+  - name: mart_pnl_daily
+    description: Daily operational P&L mart by date and business category focused on contribution margin monitoring before OPEX.
+    columns:
+      - name: order_date
+        tests:
+          - not_null
+      - name: business_category
+        tests:
+          - not_null
+      - name: product_revenue
+        tests:
+          - not_null
+      - name: gross_revenue
+        tests:
+          - not_null
+      - name: contribution_margin
+        tests:
+          - not_null
+      - name: marketing_rate
+        tests:
+          - not_null
+      - name: simulated_marketing_cost
+        tests:
+          - not_null
+      - name: contribution_margin_after_marketing
+        tests:
+          - not_null
+
+  - name: mart_monthly_pnl
+    description: Scenario-based monthly retail P&L model using delivery, OPEX, and marketing assumptions.
+    columns:
+      - name: order_month
+        tests:
+          - not_null
+      - name: delivery_rule_name
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['low_cost', 'standard', 'high_cost']
+          - relationships:
+              arguments:
+                to: ref('stg_delivery_cost_rules')
+                field: rule_name
+      - name: fixed_cost_per_order_brl
+        tests:
+          - not_null
+      - name: variable_delivery_rate
+        tests:
+          - not_null
+      - name: delivery_cost_rate
+        tests:
+          - not_null
+      - name: opex_scenario
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['lean', 'base', 'growth']
+          - relationships:
+              arguments:
+                to: ref('stg_opex_assumptions')
+                field: opex_scenario
+      - name: marketing_scenario
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['organic', 'base', 'paid_growth']
+          - relationships:
+              arguments:
+                to: ref('stg_marketing_assumptions')
+                field: marketing_scenario
+      - name: product_revenue
+        tests:
+          - not_null
+      - name: simulated_cogs
+        tests:
+          - not_null
+      - name: simulated_waste_cost
+        tests:
+          - not_null
+      - name: simulated_delivery_cost
+        tests:
+          - not_null
+      - name: simulated_payment_fee
+        tests:
+          - not_null
+      - name: contribution_margin
+        tests:
+          - not_null
+      - name: marketing_rate
+        tests:
+          - not_null
+      - name: simulated_marketing_cost
+        tests:
+          - not_null
+      - name: contribution_margin_after_marketing
+        tests:
+          - not_null
+      - name: base_fixed_ga_brl
+        tests:
+          - not_null
+      - name: variable_ops_per_order_brl
+        tests:
+          - not_null
+      - name: capacity_tier_orders
+        tests:
+          - not_null
+      - name: step_infrastructure_cost_brl
+        tests:
+          - not_null
+      - name: total_orders
+        tests:
+          - not_null
+      - name: base_fixed_ga_opex
+        tests:
+          - not_null
+      - name: variable_ops_opex
+        tests:
+          - not_null
+      - name: infrastructure_tiers
+        tests:
+          - not_null
+      - name: step_infrastructure_opex
+        tests:
+          - not_null
+      - name: opex_fixed_ratio
+        tests:
+          - not_null
+      - name: simulated_opex
+        tests:
+          - not_null
+      - name: operating_profit
+        tests:
+          - not_null
+      - name: tax_name
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['standard_profit_tax']
+          - relationships:
+              arguments:
+                to: ref('stg_tax_assumptions')
+                field: tax_name
+      - name: tax_rate
+        tests:
+          - not_null
+      - name: taxable_profit
+        tests:
+          - not_null
+      - name: simulated_tax
+        tests:
+          - not_null
+      - name: net_profit
+        tests:
+          - not_null
