@@ -1,0 +1,361 @@
+version: 2
+
+models:
+  - name: dim_date
+    description: Power BI date dimension used to relate daily and monthly reporting views. Starts at the centralized Power BI reporting start date defined by `powerbi_reporting_start_date`.
+    columns:
+      - name: date_day
+        tests:
+          - not_null
+          - unique
+      - name: date_key
+        tests:
+          - not_null
+          - unique
+      - name: month_start_date
+        tests:
+          - not_null
+
+  - name: dim_category
+    description: Power BI business category dimension with category-level finance assumptions.
+    columns:
+      - name: business_category
+        tests:
+          - not_null
+          - unique
+
+  - name: rpt_powerbi_sales_profitability
+    description: Power BI-ready item-level profitability export view filtered to the centralized Power BI reporting period.
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+      - name: order_item_id
+        tests:
+          - not_null
+      - name: order_date
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_day
+      - name: business_category
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_category')
+                field: business_category
+      - name: gross_revenue
+        tests:
+          - not_null
+      - name: gross_revenue_usd
+        tests:
+          - not_null
+      - name: gross_revenue_eur
+        tests:
+          - not_null
+      - name: simulated_cogs
+        tests:
+          - not_null
+      - name: simulated_cogs_usd
+        tests:
+          - not_null
+      - name: simulated_cogs_eur
+        tests:
+          - not_null
+      - name: simulated_waste_cost
+        tests:
+          - not_null
+      - name: simulated_waste_cost_usd
+        tests:
+          - not_null
+      - name: simulated_waste_cost_eur
+        tests:
+          - not_null
+      - name: simulated_delivery_cost
+        tests:
+          - not_null
+      - name: simulated_delivery_cost_usd
+        tests:
+          - not_null
+      - name: simulated_delivery_cost_eur
+        tests:
+          - not_null
+      - name: simulated_payment_fee
+        tests:
+          - not_null
+      - name: simulated_payment_fee_usd
+        tests:
+          - not_null
+      - name: simulated_payment_fee_eur
+        tests:
+          - not_null
+      - name: simulated_marketing_cost
+        tests:
+          - not_null
+      - name: simulated_marketing_cost_usd
+        tests:
+          - not_null
+      - name: simulated_marketing_cost_eur
+        tests:
+          - not_null
+      - name: contribution_margin
+        tests:
+          - not_null
+      - name: contribution_margin_usd
+        tests:
+          - not_null
+      - name: contribution_margin_eur
+        tests:
+          - not_null
+      - name: contribution_margin_after_marketing
+        tests:
+          - not_null
+      - name: contribution_margin_after_marketing_usd
+        tests:
+          - not_null
+      - name: contribution_margin_after_marketing_eur
+        tests:
+          - not_null
+      - name: usd_fx_rate
+        tests:
+          - not_null
+      - name: eur_fx_rate
+        tests:
+          - not_null
+
+  - name: rpt_powerbi_monthly_pnl
+    description: Power BI-ready monthly P&L export view at month, delivery rule, OPEX scenario, and marketing scenario grain, filtered to the centralized Power BI reporting period.
+    columns:
+      - name: order_month
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_day
+      - name: delivery_rule_name
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['low_cost', 'standard', 'high_cost']
+          - relationships:
+              arguments:
+                to: ref('stg_delivery_cost_rules')
+                field: rule_name
+      - name: fixed_cost_per_order_brl
+        tests:
+          - not_null
+      - name: fixed_cost_per_order_usd
+        tests:
+          - not_null
+      - name: fixed_cost_per_order_eur
+        tests:
+          - not_null
+      - name: variable_delivery_rate
+        tests:
+          - not_null
+      - name: delivery_cost_rate
+        tests:
+          - not_null
+      - name: opex_scenario
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['lean', 'base', 'growth']
+          - relationships:
+              arguments:
+                to: ref('stg_opex_assumptions')
+                field: opex_scenario
+      - name: marketing_scenario
+        tests:
+          - not_null
+      - name: gross_revenue
+        tests:
+          - not_null
+      - name: operating_profit
+        tests:
+          - not_null
+      - name: net_profit
+        tests:
+          - not_null
+      - name: total_orders
+        tests:
+          - not_null
+      - name: base_fixed_ga_opex
+        tests:
+          - not_null
+      - name: variable_ops_opex
+        tests:
+          - not_null
+      - name: infrastructure_tiers
+        tests:
+          - not_null
+      - name: step_infrastructure_opex
+        tests:
+          - not_null
+      - name: simulated_opex
+        tests:
+          - not_null
+      - name: opex_fixed_ratio
+        tests:
+          - not_null
+      - name: usd_fx_rate
+        tests:
+          - not_null
+      - name: eur_fx_rate
+        tests:
+          - not_null
+
+  - name: rpt_powerbi_daily_pnl
+    description: Power BI-ready daily operational P&L export view at date and business category grain, filtered to the centralized Power BI reporting period.
+    columns:
+      - name: order_date
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_day
+      - name: business_category
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_category')
+                field: business_category
+      - name: gross_revenue
+        tests:
+          - not_null
+      - name: gross_revenue_usd
+        tests:
+          - not_null
+      - name: gross_revenue_eur
+        tests:
+          - not_null
+      - name: simulated_cogs
+        tests:
+          - not_null
+      - name: simulated_cogs_usd
+        tests:
+          - not_null
+      - name: simulated_cogs_eur
+        tests:
+          - not_null
+      - name: simulated_waste_cost
+        tests:
+          - not_null
+      - name: simulated_waste_cost_usd
+        tests:
+          - not_null
+      - name: simulated_waste_cost_eur
+        tests:
+          - not_null
+      - name: simulated_delivery_cost
+        tests:
+          - not_null
+      - name: simulated_delivery_cost_usd
+        tests:
+          - not_null
+      - name: simulated_delivery_cost_eur
+        tests:
+          - not_null
+      - name: simulated_payment_fee
+        tests:
+          - not_null
+      - name: simulated_payment_fee_usd
+        tests:
+          - not_null
+      - name: simulated_payment_fee_eur
+        tests:
+          - not_null
+      - name: simulated_marketing_cost
+        tests:
+          - not_null
+      - name: simulated_marketing_cost_usd
+        tests:
+          - not_null
+      - name: simulated_marketing_cost_eur
+        tests:
+          - not_null
+      - name: contribution_margin
+        tests:
+          - not_null
+      - name: contribution_margin_usd
+        tests:
+          - not_null
+      - name: contribution_margin_eur
+        tests:
+          - not_null
+      - name: contribution_margin_after_marketing
+        tests:
+          - not_null
+      - name: contribution_margin_after_marketing_usd
+        tests:
+          - not_null
+      - name: contribution_margin_after_marketing_eur
+        tests:
+          - not_null
+      - name: usd_fx_rate
+        tests:
+          - not_null
+      - name: eur_fx_rate
+        tests:
+          - not_null
+
+  - name: rpt_powerbi_delivery
+    description: Power BI-ready delivery economics export view filtered to the centralized Power BI reporting period.
+    columns:
+      - name: order_month
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_day
+      - name: business_category
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_category')
+                field: business_category
+      - name: delivery_rule_name
+        tests:
+          - not_null
+      - name: fixed_cost_per_order_brl
+        tests:
+          - not_null
+      - name: fixed_cost_per_order_usd
+        tests:
+          - not_null
+      - name: fixed_cost_per_order_eur
+        tests:
+          - not_null
+      - name: variable_delivery_rate
+        tests:
+          - not_null
+      - name: logistics_margin
+        tests:
+          - not_null
+
+  - name: rpt_powerbi_payments
+    description: Power BI-ready payment KPI export view filtered to delivered orders in the centralized Power BI reporting period.
+    columns:
+      - name: payment_type
+        tests:
+          - not_null
+          - unique
+      - name: total_payment_value
+        tests:
+          - not_null
+      - name: total_delivered_payment_orders
+        tests:
+          - not_null
+      - name: total_simulated_fees
+        tests:
+          - not_null
