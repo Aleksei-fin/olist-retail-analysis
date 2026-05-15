@@ -419,7 +419,7 @@ Completed:
 
 - PostgreSQL raw source setup
 - dbt project structure
-- staging, intermediate, marts, semantic, and reporting folders
+- staging, intermediate, marts, reporting, and Power BI semantic documentation
 - category mapping and assumption logic
 - payment fee simulation
 - Marketing cost simulation

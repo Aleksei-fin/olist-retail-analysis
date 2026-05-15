@@ -6,11 +6,7 @@ This is the implemented Tabular Editor workflow used to generate and maintain th
 
 ## Tooling
 
-Tabular Editor 2.27.2 is installed at:
-
-```text
-C:\Program Files (x86)\Tabular Editor\TabularEditor.exe
-```
+Tabular Editor 2.x is used to apply the measure layer through Advanced Scripting.
 
 ## Script
 
@@ -30,7 +26,7 @@ The script:
 - creates or updates every DAX measure from the fenced `DAX` blocks
 - assigns display folders
 - applies basic format strings for currency, percentages, counts, and text/status measures
-- applies dynamic format strings to selected-currency money measures so `Currency Selector[Currency]` switches `R$`, `$`, and `€` display while measures remain numeric
+- applies dynamic format strings to selected-currency money measures so `Currency Selector[Currency]` switches BRL, USD, and EUR display while measures remain numeric
 - adds measure descriptions showing that the measure was generated from the markdown catalog
 
 ## PBIX Table Name Mapping
