@@ -68,10 +68,11 @@ Because the original Olist dataset does not contain real COGS, waste, delivery c
 
 - PostgreSQL: source database and analytical schemas
 - dbt: transformation framework, seeds, models, and tests
+- Power BI: dashboard, semantic model, DAX measures, PBIX, and screenshots
+- Tabular Editor: DAX measure layer automation and dynamic format strings
 - Git / GitHub: version control and portfolio presentation
 - VS Code: development environment
 - DBeaver: database inspection and SQL validation
-- Power BI: completed dashboard, semantic model, DAX measures, PBIX, and screenshots
 
 ## 4. Data Sources
 
