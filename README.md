@@ -24,6 +24,24 @@ The project is designed as a portfolio-grade analytics engineering workflow: Pos
 - Customer growth metrics with simulated CAC, ROAS, and LTV/CAC
 - Final Power BI dashboard pack with PBIX and screenshots
 
+## Quick Start Summary
+
+To reproduce the project locally:
+
+1. Download the public Olist CSV dataset from Kaggle.
+2. Create a PostgreSQL database and load the required raw Olist CSV tables.
+3. Configure your local dbt `profiles.yml` for PostgreSQL.
+4. Run `dbt seed` to load controlled business assumption seeds.
+5. Run `dbt build` to create staging, marts, reporting views, and tests.
+6. Open `powerbi/pbix/olist_finance_analytics.pbix` in Power BI Desktop and refresh the data source.
+
+Detailed setup instructions are available in [docs/how_to_run.md](docs/how_to_run.md).
+
+Additional documentation:
+
+- [Project Story](docs/project_story.md)
+- [Metrics and Grain](docs/metrics_and_grain.md)
+
 ## 2. Business Context
 
 The case treats Olist as a retail / marketplace finance analytics environment.
@@ -387,29 +405,15 @@ Supporting technical validation pages, intended to remain hidden in the final re
 
 ## 11. How to Run
 
-Run commands from the repository root after configuring your local dbt profile for PostgreSQL.
+See [docs/how_to_run.md](docs/how_to_run.md) for detailed local setup instructions covering:
 
-Common commands:
+- PostgreSQL database setup
+- Olist raw CSV download and loading
+- dbt profile configuration
+- dbt seed/build sequence
+- Power BI data source refresh
 
-```bash
-dbt debug
-dbt parse
-dbt seed
-dbt run
-dbt test
-dbt build
-```
-
-Targeted examples:
-
-```bash
-dbt seed --select category_mapping category_assumptions payment_fee_rules delivery_cost_rules opex_assumptions marketing_assumptions tax_assumptions
-dbt run --select staging intermediate marts
-dbt test --select staging intermediate marts
-dbt build
-```
-
-On Windows, this project may require elevated permissions for dbt commands because dbt writes to `target/` and `logs/`.
+Important: `dbt seed` loads only the controlled assumption CSV files from this repository. It does not load the external raw Olist dataset.
 
 ## 12. Project Status
 

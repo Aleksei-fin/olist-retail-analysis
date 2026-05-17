@@ -71,11 +71,3 @@ sources:
           - name: product_category_name_english
             tests:
               - not_null
-
-      - name: dim_category_assumptions
-        description: Category-level business assumptions for COGS and waste.
-        columns:
-          - name: category_name_english
-            tests:
-              - not_null
-              - unique
